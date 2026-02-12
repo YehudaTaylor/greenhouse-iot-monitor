@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Greenhouse IoT Monitor
+
+A real-time dashboard for monitoring greenhouse environments through IoT sensors. Track temperature, humidity, soil moisture, light levels, and CO2 across multiple greenhouses, zones, and devices — with configurable alert rules and analytics.
+
+## Features
+
+- **Dashboard Overview** — Summary cards for greenhouses, devices, active alerts, and sensors with recent alert feed and live sensor grid
+- **Greenhouse Management** — CRUD for greenhouses with zone organization and detail views
+- **Device Tracking** — Table view of IoT devices (ESP32, Arduino Nano) with online/offline status
+- **Sensor Monitoring** — Real-time readings with historical chart visualization per sensor
+- **Alert System** — Configurable alert rules (above/below thresholds) with severity levels and acknowledgment workflow
+- **Analytics** — Trend charts, stats cards, date range filtering, and CSV export
+- **Authentication** — NextAuth credentials provider with role-based access (Admin/Viewer)
+- **Responsive Layout** — Sidebar navigation with mobile-friendly sheet menu
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Database**: SQLite via Prisma 7 with Better-SQLite3 adapter
+- **Auth**: NextAuth.js 4 with credentials provider
+- **UI**: shadcn/ui + Radix UI + Tailwind CSS 4
+- **Charts**: Recharts
+- **Forms**: React Hook Form + Zod validation
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Setup
 
 ```bash
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env
+
+# Generate Prisma client and run migrations
+npx prisma generate
+npx prisma db push
+
+# Start the dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Seed Data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To populate the database with sample greenhouses, devices, sensors, and 30 days of readings:
 
-## Learn More
+```bash
+curl -X POST http://localhost:3000/api/seed
+```
 
-To learn more about Next.js, take a look at the following resources:
+This creates:
+- 2 greenhouses with 3 zones each
+- 12 devices (ESP32 and Arduino Nano)
+- 30 sensors (temperature, humidity, soil moisture, light, CO2)
+- ~43,000 sensor readings (30 days at 30-minute intervals)
+- Alert rules and sample triggered alerts
+- Admin user: `admin@greenhouse.io` / `password123`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/
+│   ├── (auth)/              # Login and registration pages
+│   ├── (dashboard)/         # Protected dashboard routes
+│   │   ├── alerts/          # Alert management
+│   │   ├── analytics/       # Trend charts and CSV export
+│   │   ├── devices/         # Device table view
+│   │   ├── greenhouses/     # Greenhouse CRUD and detail views
+│   │   ├── sensors/         # Sensor monitoring and charts
+│   │   └── settings/        # User settings
+│   └── api/                 # REST API routes
+├── components/
+│   ├── alerts/              # Alert banner, table, rule form
+│   ├── analytics/           # Trend chart, stats, date picker, export
+│   ├── devices/             # Device table, form, status badge
+│   ├── greenhouses/         # Greenhouse card and form
+│   ├── layout/              # Sidebar, header, mobile nav
+│   ├── sensors/             # Sensor card, chart, grid
+│   └── ui/                  # shadcn/ui component library
+├── lib/                     # Auth config, Prisma client, utilities
+└── types/                   # NextAuth type extensions
+```
 
-## Deploy on Vercel
+## Data Model
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+Greenhouse → Zone → Device → Sensor → SensorReading
+                                    → AlertRule
+                                    → Alert
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Each greenhouse contains zones, which contain devices. Devices have sensors that produce readings. Sensors can have alert rules that trigger alerts when thresholds are exceeded.
