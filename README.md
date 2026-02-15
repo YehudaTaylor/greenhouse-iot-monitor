@@ -13,6 +13,33 @@ A real-time dashboard for monitoring greenhouse environments through IoT sensors
 - **Authentication** — NextAuth credentials provider with role-based access (Admin/Viewer)
 - **Responsive Layout** — Sidebar navigation with mobile-friendly sheet menu
 
+## Screenshots
+
+### Dashboard
+Overview with stat cards, recent alerts, and live sensor grid.
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Greenhouses
+Greenhouse list with zone and device counts.
+
+![Greenhouses](docs/screenshots/greenhouses.png)
+
+### Sensors
+Sensor monitoring with type badges and latest readings.
+
+![Sensors](docs/screenshots/sensors.png)
+
+### Alerts
+Alert table with severity badges and acknowledgment status.
+
+![Alerts](docs/screenshots/alerts.png)
+
+### Analytics
+Trend charts, stats cards, and date range filtering with CSV export.
+
+![Analytics](docs/screenshots/analytics.png)
+
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
